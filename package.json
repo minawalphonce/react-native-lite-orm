@@ -1,0 +1,25 @@
+{
+  "name": "react-native-lite-orm",
+  "version": "1.0.0",
+  "description": "simple and litewight sqlite ORM",
+  "main": "src/index.ts",
+  "author": "Mina W Alphonce",
+  "license": "MIT",
+  "repository": {
+    "url": "https://github.com/minawalphonce/react-native-lite-oms.git"
+  },
+  "private": false,
+  "peerDependencies": {
+    "expo-sqlite": "^9.2.1",
+    "react": "^17.0.2",
+    "react-native": "^0.65.1"
+  },
+  "dependencies": {
+    "expo-sqlite": "^9.2.1",
+    "react": "^17.0.2",
+    "react-native": "^0.65.1"
+  },
+  "devDependencies": {
+    "typescript": "^4.4.3"
+  }
+}
