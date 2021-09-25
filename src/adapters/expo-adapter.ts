@@ -5,14 +5,15 @@ import { IAdapter } from "./adapter";
 export class ExpoAdapter implements IAdapter {
     private database: SQLite.WebSQLDatabase
 
-    constructor(private name = "trooprDb") {
+    constructor(public name = "trooprDb") {
+
     }
 
     connect() {
         this.database = SQLite.openDatabase(this.name);
     }
 
-    async executeBulkSql(sqls: string[], params = []): Promise<Array<{ rows?: any[], insertId?: number }>> {
+    async executeBulkSql(sqls: string[], params: any[] = []): Promise<Array<{ rows?: any[], insertId?: number }>> {
         return new Promise((txResolve, txReject) => {
             this.database.transaction(
                 tx => {

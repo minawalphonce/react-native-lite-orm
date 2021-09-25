@@ -1,6 +1,6 @@
-import { Row, WhereOption, Op, SqlType } from '../types';
+import { Row, WhereOption, Op, SqlType } from '../../../types';
 
-export type Operation = (row: Row) => Boolean;
+export type Operation = (row: Row) => boolean;
 
 const opMapping: Record<
   string,

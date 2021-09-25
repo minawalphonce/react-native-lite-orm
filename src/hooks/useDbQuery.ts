@@ -1,20 +1,27 @@
-import { useRef, useReducer, useLayoutEffect } from "react";
+import { useRef, useReducer, useLayoutEffect, useCallback } from "react";
 
-import { QueryOptions } from "../types";
+import { QueryOptions, Row } from "../types";
 import { useDbContext } from "./useDbContext";
 
-export function useDbQuery<T>(query: QueryOptions & { tableName: string }): T[] {
+export function useDbQuery<T extends Row>(query: QueryOptions<T> & { tableName: string }): T[] {
     const [, forceRender] = useReducer((s) => s + 1, 0)
     const queryResult = useRef<T[]>([]);
     const dbContext = useDbContext();
 
+    const callBack = useCallback((result: T[]) => {
+        console.log(result);
+        if (queryResult.current === result)
+            return;
+        queryResult.current = result;
+        forceRender();
+    }, [dbContext]);
+
     useLayoutEffect(() => {
-        dbContext.table(query.tableName).query(query).subscribe(result => {
-            if (queryResult.current === result)
-                return;
-            queryResult.current = result;
-            forceRender();
-        })
-    });
+        const unsubscribe = dbContext.table<T>(query.tableName).query(query).subscribe(callBack).subscribe;
+        return () => {
+            unsubscribe(callBack)
+        }
+    }, [dbContext]);
+
     return queryResult.current;
 }

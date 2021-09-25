@@ -14,4 +14,4 @@ export { useDbContext } from "./hooks/useDbContext";
 export { useDbQuery } from "./hooks/useDbQuery";
 
 //components
-export { DatabaseProviderProps } from "./components/database-provider";
+export { DatabaseProvider, DatabaseProviderProps } from "./components/database-provider";

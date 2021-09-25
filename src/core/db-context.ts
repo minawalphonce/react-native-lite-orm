@@ -43,12 +43,11 @@ export class DbQuery<T extends Row = Row> {
     private options: QueryOptions<T> & { tableName: string },
     private adapter: IAdapter
   ) { }
-  async subscribe(callback: Callback<T>) {
-    const res = await this.fetch();
-    await callback(res);
+  subscribe(callback: Callback<T>) {
+    this.fetch().then(callback);
     return this;
   }
-  async unsubscribe() {
+  unsubscribe() {
     return this;
   }
 

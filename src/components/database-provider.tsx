@@ -4,12 +4,10 @@ import { DbContext } from "../core/db-context";
 import { ReactDatabaseContext } from "./context";
 
 export interface DatabaseProviderProps {
-    dbContext: DbContext
+    database: DbContext
     children: ReactNode
 }
 
-function DatabaseProvider({ dbContext, children }: DatabaseProviderProps) {
-    return <ReactDatabaseContext.Provider value={dbContext}> {children} </ReactDatabaseContext.Provider>
+export function DatabaseProvider({ database, children }: DatabaseProviderProps) {
+    return <ReactDatabaseContext.Provider value={database}>{children}</ReactDatabaseContext.Provider>
 }
-
-export default DatabaseProvider
