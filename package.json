@@ -1,6 +1,6 @@
 {
   "name": "react-native-lite-orm",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "simple and litewight sqlite ORM",
   "main": "src/index.ts",
   "author": "Mina W Alphonce",
