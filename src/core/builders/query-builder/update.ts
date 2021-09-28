@@ -1,6 +1,6 @@
 import { Row } from "../../../types";
 
-export function update(tableName: string, row: Row) {
+export function update(tableName: string, row: Partial<Row>) {
     const { id, ...props } = row;
     const values = Object.keys(props)
         .map(k => `${k} = ?`)

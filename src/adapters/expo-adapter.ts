@@ -3,17 +3,21 @@ import * as SQLite from 'expo-sqlite';
 import { IAdapter } from "./adapter";
 
 export class ExpoAdapter implements IAdapter {
-    private database: SQLite.WebSQLDatabase
+    private database: SQLite.WebSQLDatabase | null;
 
-    constructor(public name = "trooprDb") {
-
+    constructor(public name = "default") {
+        this.database = null;
     }
 
-    connect() {
+    connect(newName?: string) {
+        this.name = newName || this.name;
         this.database = SQLite.openDatabase(this.name);
     }
 
     async executeBulkSql(sqls: string[], params: any[] = []): Promise<Array<{ rows?: any[], insertId?: number }>> {
+        if (!this.database) {
+            throw new Error("database not connected");
+        }
         return new Promise((txResolve, txReject) => {
             this.database.transaction(
                 tx => {
@@ -39,7 +43,7 @@ export class ExpoAdapter implements IAdapter {
         })
     }
 
-    async expectSql(sql: string, params = []): Promise<{ rows?: any[], insertId?: number }> {
+    async expectSql(sql: string, params: any[] = []): Promise<{ rows?: any[], insertId?: number }> {
         return this.executeBulkSql([sql], [params])
             .then(res => res[0])
             .catch(error => { throw error })
