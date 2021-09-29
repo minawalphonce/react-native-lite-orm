@@ -15,7 +15,7 @@ export class DbAction<T extends Row = Row> {
 
     add(...rows: T[]) {
         rows.forEach((row) => {
-            this._sql.push(qb.insert(this.tableName, row));
+            this._sql.push(qb.insertOrReplace(this.tableName, row));
             this._params.push(Object.values(row));
             this._rows.push(row);
         });
@@ -24,8 +24,9 @@ export class DbAction<T extends Row = Row> {
 
     update(...rows: T[]) {
         rows.forEach((row) => {
+            const { id, ...rest } = row;
             this._sql.push(qb.update(this.tableName, row));
-            this._params.push(Object.values(row));
+            this._params.push([...Object.values(rest), id]);
             this._rows.push(row);
         });
         return this;

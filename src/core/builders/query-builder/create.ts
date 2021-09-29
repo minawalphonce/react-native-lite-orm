@@ -5,7 +5,7 @@ export function insert(tableName: string, row: Row) {
   const columns = keys.join(', ');
   const values = keys.map(() => '?').join(', ');
 
-  return `INSERT OR REPLACE INTO ${tableName} (${columns}) VALUES (${values});`;
+  return `INSERT INTO ${tableName} (${columns}) VALUES (${values});`;
 }
 
 export function insertOrReplace(tableName, object) {

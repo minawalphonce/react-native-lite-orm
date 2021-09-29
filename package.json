@@ -1,6 +1,6 @@
 {
   "name": "react-native-lite-orm",
-  "version": "1.0.0",
+  "version": "0.0.1-beta",
   "description": "simple and litewight sqlite ORM",
   "main": "src/index.ts",
   "author": "Mina W Alphonce",
@@ -10,11 +10,6 @@
   },
   "private": false,
   "peerDependencies": {
-    "expo-sqlite": "~9.2.1",
-    "react": "16.13.1",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz"
-  },
-  "dependencies": {
     "expo-sqlite": "~9.2.1",
     "react": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz"
