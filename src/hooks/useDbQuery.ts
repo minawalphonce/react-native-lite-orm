@@ -9,7 +9,6 @@ export function useDbQuery<T extends Row>(query: QueryOptions<T> & { tableName: 
     const dbContext = useDbContext();
 
     const callBack = useCallback((result: T[]) => {
-        console.log(result);
         if (queryResult.current === result)
             return;
         queryResult.current = result;
@@ -17,9 +16,10 @@ export function useDbQuery<T extends Row>(query: QueryOptions<T> & { tableName: 
     }, [dbContext]);
 
     useLayoutEffect(() => {
-        const unsubscribe = dbContext.table<T>(query.tableName).query(query).subscribe(callBack).subscribe;
+        const dbQuery = dbContext.table<T>(query.tableName).query(query);
+        dbQuery.subscribe(callBack);
         return () => {
-            unsubscribe(callBack)
+            dbQuery.unsubscribe();
         }
     }, [dbContext]);
 
