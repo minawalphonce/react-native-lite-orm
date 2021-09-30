@@ -38,7 +38,7 @@ export class DbContext {
     }
 
     if (!this._isInitialized) {
-      this._options.adapter.connect();
+      this._options.adapter.connect(newName);
       if (this._options.schemaBuilder) {
         const schema = new DbSchema(this._options.adapter);
         await this._options.schemaBuilder(schema);
