@@ -1,5 +1,5 @@
 import { useRef, useReducer } from "react";
-import { DbAction } from "../core/db-context";
+import { DbAction } from "../core/db-action";
 
 import { Row } from "../types";
 import { useDbContext } from "./useDbContext";

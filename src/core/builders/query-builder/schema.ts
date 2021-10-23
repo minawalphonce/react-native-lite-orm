@@ -14,6 +14,7 @@ export function _createTableColumns(columns: Record<string, ColumnOptions>) {
             } else {
                 if (options.unique) parts.push('UNIQUE')
                 if (options.not_null) parts.push('NOT NULL')
+                if (typeof options.default !== "undefined") parts.push(`DEFAULT ${options.default ? options.default.toString() : "NULL"}`)
             }
             return parts.join(' ')
         })

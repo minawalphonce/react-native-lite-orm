@@ -1,46 +1,33 @@
-import { QueryOptions, WhereOption, WhereOptionCondition, Row } from '../../../types';
+import { QueryOptions, WhereOption, WhereOptionCondition, Row, Op } from '../../../types';
 
 const defaultOptions: QueryOptions = {
   columns: '*',
-  page: null,
-  limit: 30,
   where: [],
-  order: ['id DESC'],
 };
 
-// Creates the "SELECT" sql statement for find one record
-export function find(tableName: string) {
-  return `SELECT * FROM ${tableName} WHERE id = ? LIMIT 1;`;
-}
 
-/* Creates the "SELECT" sql statement for query records
- * Ex: qb.query({
- *   columns: 'id, nome, status',
- *   where: {status_eq: 'encerrado'}
- * })
- */
 export function query<T extends Row = Row>(tableName: string, options: QueryOptions<T> = {}) {
   const { columns, page, limit, where, order } = {
     ...defaultOptions,
     ...options,
   };
 
-  const whereStatement = queryWhere(where);
-
+  const whereStatement = where ? queryWhere(where) : "";
   let sqlParts = [
     'SELECT',
-    columns === '*' ? '*' : columns.join(','),
+    columns === '*' ? '*' : columns?.join(','),
     'FROM',
     tableName,
-    whereStatement,
-    'ORDER BY',
-    order.join(','),
+    whereStatement
   ];
-  if (page !== null) {
-    sqlParts.push(
-      ...['LIMIT', limit.toString(), 'OFFSET', (limit * (page - 1)).toString()]
-    );
+  if (order && order.length) {
+    sqlParts.push(...['ORDER BY', order.join(',')])
   }
+  if (limit) {
+    sqlParts.push(...['LIMIT', limit?.toString()]);
+  }
+  if (limit && page)
+    sqlParts.push(...['OFFSET', ((page - 1) * limit).toString()]);
 
   return sqlParts.filter((p) => p !== '').join(' ');
 }
@@ -64,9 +51,9 @@ export function propertyOperation(
   return Object.keys(condition)
     .map((op) => {
       const operation = op.toString();
-      return `${col} ${operation} ?`;
+      return `${col} ${operation} ${(op === Op.isNotNull || op === Op.isNull) ? "" : "?"}`;
     })
     .join(' AND ');
 }
 
-export default { find, query };
+export default { query };

@@ -8,11 +8,8 @@ export function insert(tableName: string, row: Row) {
   return `INSERT INTO ${tableName} (${columns}) VALUES (${values});`;
 }
 
-export function insertOrReplace(tableName, object) {
-  return insert(tableName, object).replace(
-    'INSERT INTO',
-    'INSERT OR REPLACE INTO'
-  );
+export function insertOrReplace(tableName: string, row: Row) {
+  return insert(tableName, row).replace('INSERT INTO', 'INSERT OR REPLACE INTO');
 }
 
 export default { insert, insertOrReplace };

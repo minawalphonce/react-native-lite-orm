@@ -1,9 +1,13 @@
-import { useRef, useReducer, useLayoutEffect, useCallback } from "react";
+import React, { useRef, useReducer, useLayoutEffect, useCallback } from "react";
 
 import { QueryOptions, Row } from "../types";
 import { useDbContext } from "./useDbContext";
 
-export function useDbQuery<T extends Row>(query: QueryOptions<T> & { tableName: string }): T[] {
+export function useDbQuery<T extends Row>(
+    query: QueryOptions<T> & { tableName: string },
+    onError: (err: any) => void = () => { },
+    deps: React.DependencyList = []
+): T[] {
     const [, forceRender] = useReducer((s) => s + 1, 0)
     const queryResult = useRef<T[]>([]);
     const dbContext = useDbContext();
@@ -13,7 +17,7 @@ export function useDbQuery<T extends Row>(query: QueryOptions<T> & { tableName: 
             return;
         queryResult.current = result;
         forceRender();
-    }, [dbContext]);
+    }, [...deps, dbContext]);
 
     useLayoutEffect(() => {
         const dbQuery = dbContext.table<T>(query.tableName).query(query);
@@ -21,7 +25,7 @@ export function useDbQuery<T extends Row>(query: QueryOptions<T> & { tableName: 
         return () => {
             dbQuery.unsubscribe();
         }
-    }, [dbContext]);
+    }, [...deps, dbContext]);
 
     return queryResult.current;
 }

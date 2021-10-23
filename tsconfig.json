@@ -1,15 +1,18 @@
 {
-  "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "jsx": "react-native",
-    "lib": ["dom", "esnext"],
-    "moduleResolution": "node",
-    "noEmit": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "strict": true,
-    "noImplicitAny": false,
-    "downlevelIteration": true
-  },
-  "exclude": ["node_modules", "**/node_modules/*"]
+	"compilerOptions": {
+		"declaration": true,
+		"esModuleInterop": true,
+		"jsx": "react",
+		"lib": ["ESNext"],
+		"module": "ESNext",
+		"moduleResolution": "Node",
+		"noEmitOnError": true,
+		"outDir": "./lib",
+		"skipLibCheck": true,
+		"sourceMap": true,
+		"strict": true,
+		"target": "ES2018"
+	},
+	"exclude": ["**/__tests__/*", "**/__mocks__/*"],
+	"include": ["src"]
 }

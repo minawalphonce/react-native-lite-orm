@@ -33,11 +33,17 @@ export class DbAction<T extends Row = Row> {
     }
 
     destroy(...rows: T[]) {
-        rows.forEach((row) => {
-            this._sql.push(qb.destroy(this.tableName));
-            this._params.push([row.id]);
-            this._rows.push(row);
-        });
+        if (rows.length)
+            rows.forEach((row) => {
+                this._sql.push(qb.destroy(this.tableName));
+                this._params.push([row.id]);
+                this._rows.push(row);
+            });
+        else {
+            this._sql.push(qb.destroyAll(this.tableName));
+            this._params.push([]);
+            this._rows.push({} as any);
+        }
         return this;
     }
 

@@ -9,16 +9,13 @@ export class DbTable<T extends Row = Row> {
 
     private subscrtiptions = new Map<
         DbQuery<T>,
-        {
-            filter: Operation;
-            callback: Callback<T>;
-        }
+        { filter: Operation; callback: Callback<T> }
     >();
 
     actions(): DbAction<T> {
-        return new Proxy(new DbAction<T>(this.tableName, this.adapter), {
+        const proxy = new Proxy(new DbAction<T>(this.tableName, this.adapter), {
             get: (target, methodName) => {
-                if (methodName === 'execute') {
+                if (methodName === "execute") {
                     return async () => {
                         const affectedRows = target._rows;
                         const callbacks: {
@@ -37,32 +34,40 @@ export class DbTable<T extends Row = Row> {
                         });
                     };
                 }
+                //@ts-ignore
                 return target[methodName];
             },
         });
+        return proxy;
     }
     query(options?: QueryOptions<T>): DbQuery<T> {
-        return new Proxy(
+        const proxy = new Proxy(
             new DbQuery<T>({ ...options, tableName: this.tableName }, this.adapter),
             {
                 get: (target, methodName) => {
-                    if (methodName === 'subscribe') {
+                    if (methodName === "subscribe") {
                         return (callback: Callback<T>) => {
                             this.subscrtiptions.set(target, {
-                                filter: !(options?.where) ? () => true : fb.toFilterExpression(options.where),
+                                filter: !options?.where
+                                    ? () => true
+                                    : fb.toFilterExpression(options.where),
                                 callback: callback,
                             });
                             target.subscribe(callback);
+                            return proxy;
                         };
-                    } else if (methodName === 'unsubscribe') {
+                    } else if (methodName === "unsubscribe") {
                         return () => {
                             this.subscrtiptions.delete(target);
                             target.unsubscribe();
+                            return proxy;
                         };
                     }
+                    //@ts-ignore
                     return target[methodName];
                 },
             }
         );
+        return proxy;
     }
 }

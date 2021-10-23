@@ -7,8 +7,8 @@ export class DbQuery<T extends Row = Row> {
         private options: QueryOptions<T> & { tableName: string },
         private adapter: IAdapter
     ) { }
-    subscribe(callback: Callback<T>) {
-        this.fetch().then(callback);
+    subscribe(callback: Callback<T>, onErrorCallback?: (err: any) => void) {
+        this.fetch().then(callback).catch(onErrorCallback);
         return this;
     }
     unsubscribe() {
@@ -25,6 +25,7 @@ export class DbQuery<T extends Row = Row> {
                 const paramaters = Object.entries(option).flatMap(([_, condition]) =>
                     Object.values(condition)
                 );
+                //@ts-ignore
                 params = [...params, ...paramaters];
             });
         const res = await this.adapter.expectSql(sql, params);

@@ -1,4 +1,4 @@
-import { DbSchema } from "../core/db-context";
+import { DbSchema } from "../core/db-schema";
 
 export type Migration = {
     name: string,

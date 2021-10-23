@@ -21,10 +21,10 @@ export class DbContext {
   private _tables = new Map<string, any>();
   private _options: DbContextOptions
 
-  constructor(options: Partial<DbContextOptions>) {
+  constructor(options?: Partial<DbContextOptions>) {
     this._options = {
       ...defaultDbContextOptions,
-      ...options
+      ...options || {}
     }
 
     if (this._options.autoConnect) {

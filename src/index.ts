@@ -3,7 +3,7 @@ export { ExpoAdapter } from './adapters/expo-adapter';
 export { IAdapter } from "./adapters/adapter";
 // core 
 export * from "./types";
-export { DbContext, DbAction, DbQuery, DbTable, DbSchema } from './core/db-context';
+export * from "./core";
 
 // migrator 
 export { updateDatabase } from "./migrator/update-database"
