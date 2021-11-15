@@ -20,6 +20,18 @@ export class DbSchema {
         this._sql.push(qb.dropTable(tableName));
     }
 
+    addColumn(tableName: string, column: string, option: ColumnOptions) {
+        this._sql.push(qb.addColumn(tableName, column, option));
+    }
+
+    dropColumn(tableName: string, column: string) {
+        this._sql.push(qb.dropColumn(tableName, column));
+    }
+
+    renameColumn(tableName: string, column: string, newColumn: string) {
+        this._sql.push(qb.renameColumn(tableName, column, newColumn));
+    }
+
     async tableExists(tableName: string): Promise<Boolean> {
         const res = await this.adapter.expectSql(qb.tableExists(tableName), []);
         return res.rows.length > 0;
