@@ -1,6 +1,6 @@
 {
   "name": "react-native-lite-orm",
-  "version": "0.0.7-beta",
+  "version": "0.0.8-beta",
   "description": "",
   "homepage": "https://github.com/minawalphonce/react-native-lite-orm.git",
   "main": "lib/index.js",
