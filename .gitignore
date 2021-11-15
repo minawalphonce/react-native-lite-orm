@@ -66,3 +66,4 @@ lib/
 dist/
 etc/
 temp/
+coverage/
