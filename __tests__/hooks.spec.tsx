@@ -7,18 +7,53 @@ import { useDbQuery } from "../src/hooks/useDbQuery";
 import { DatabaseProvider } from "../src/components/database-provider";
 import { IAdapter } from '../src/adapters/adapter';
 import { DbContext } from '../src/core/db-context';
-import { Op } from "../src/types";
+import { Op, SqlType } from "../src/types";
+
+const sleep = (seconds: number) => new Promise(r => setTimeout(r, seconds * 1000));
+const mockReduce = jest.fn();
+jest.mock('react', () => ({
+    //@ts-ignore
+    ...jest.requireActual('react'),
+    useReducer: () => [null, mockReduce],
+}));
 
 describe("Hooks", () => {
 
     let mockAdapter: IAdapter = null;
     let database: DbContext = null;
-
+    let rows: any[] = [{
+        id: 1,
+        col1: "val1"
+    }];
     beforeEach(() => {
         mockAdapter = {
             connect: jest.fn(),
-            executeBulkSql: jest.fn(),
-            expectSql: jest.fn(),
+            //for insert
+            executeBulkSql: jest.fn((sqls: string[], params: SqlType[][]) => {
+                if (sqls[0].startsWith("INSERT")) {
+                    rows.push({
+                        id: params[0][0],
+                        col1: params[0][1]
+                    })
+                    return Promise.resolve([{}]);
+                }
+                else if (sqls[0].startsWith("SELECT")) {
+                    return Promise.resolve([{ rows: [...rows] }])
+                }
+            }),
+            //for select
+            expectSql: jest.fn((sqls: string, params: SqlType[]) => {
+                if (sqls.startsWith("INSERT")) {
+                    rows.push({
+                        id: params[0],
+                        col1: params[1]
+                    })
+                    return Promise.resolve({});
+                }
+                else if (sqls.startsWith("SELECT")) {
+                    return Promise.resolve({ rows: [...rows] })
+                }
+            }),
             name: "default"
         };
         database = new DbContext({
@@ -61,7 +96,7 @@ describe("Hooks", () => {
         )
     })
 
-    test("useDbQuery re render when something changes", () => {
+    test("useDbQuery re render when something changes", async () => {
         //arrange
         const Root = ({ database }: { database: DbContext }) => {
             return (
@@ -71,7 +106,7 @@ describe("Hooks", () => {
             )
         }
         const TestComp = () => {
-            const result = useDbQuery({
+            useDbQuery({
                 tableName: "myTable",
                 where: [{
                     col1: {
@@ -79,14 +114,18 @@ describe("Hooks", () => {
                     }
                 }]
             });
-            const txt = JSON.stringify(result);
-            return <Text testID="text">{txt}</Text>
+            return null;
         }
 
         //act
-        const { getByTestId } = render(<Root database={database} />);
+        render(<Root database={database} />);
+        await database.table("myTable").actions().add({
+            id: 2,
+            col1: "val1"
+        }).execute();
 
         //assert
-        expect(getByTestId("text").children).toStrictEqual(["[]"]);
+        await sleep(0.5);
+        expect(mockReduce).toBeCalledTimes(2);
     })
 });

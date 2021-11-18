@@ -2,8 +2,8 @@ import { DbSchema } from "../core/db-schema";
 
 export type Migration = {
     name: string,
-    up: (schema: DbSchema) => void,
-    down?: () => void
+    up: (schema: DbSchema) => Promise<void>,
+    down?: () => Promise<void>
 }
 
 export async function updateDatabase(schema: DbSchema, migrationsList: Migration[]) {
@@ -11,7 +11,7 @@ export async function updateDatabase(schema: DbSchema, migrationsList: Migration
     let ndx = 0;
     if (migrationTableExists) {
         const migrations = await schema.query("__migrations", { order: ["ndx"] }).fetch();
-        while (ndx < migrations.length) {
+        while (ndx < migrations.length - 1) {
             if (migrationsList[ndx].name !== migrations[ndx].name)
                 throw new Error(`database migrations missmatch, database migrations are ${JSON.stringify(migrations.map(m => m["name"]))} but the defined one are ${JSON.stringify(migrationsList.map(m => m.name))}`);
             ndx++;
@@ -29,7 +29,7 @@ export async function updateDatabase(schema: DbSchema, migrationsList: Migration
     }
     // ==================================
     const migrationTable = schema.action("__migrations");
-    while (ndx < migrationsList.length) {
+    while (ndx < migrationsList.length - 1) {
         const migration = migrationsList[ndx];
         await migration.up(schema);
         migrationTable.add({

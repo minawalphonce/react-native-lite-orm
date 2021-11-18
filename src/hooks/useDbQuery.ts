@@ -17,11 +17,11 @@ export function useDbQuery<T extends Row>(
             return;
         queryResult.current = result;
         forceRender();
-    }, [...deps, dbContext]);
+    }, [dbContext, ...deps]);
 
     useLayoutEffect(() => {
         const dbQuery = dbContext.table<T>(query.tableName).query(query);
-        dbQuery.subscribe(callBack);
+        dbQuery.subscribe(callBack, onError);
         return () => {
             dbQuery.unsubscribe();
         }
